@@ -1,0 +1,229 @@
+/* GLOBAL STYLES */
+.women-page {
+  background-color: #faf8f6;
+  font-family: "Playfair Display", serif;
+  overflow-x: hidden;
+  color: #2b2b2b;
+}
+
+/* HERO SECTION */
+.women-hero {
+  position: relative;
+  height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+}
+
+.women-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom right,
+    rgba(0, 0, 0, 0.5),
+    rgba(0, 0, 0, 0.2)
+  );
+  z-index: 1;
+}
+
+.women-text {
+  z-index: 2;
+  max-width: 800px;
+  padding: 0 20px;
+}
+
+.women-title {
+  font-size: 4rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.women-subtitle {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.3rem;
+  font-style: italic;
+  color: #f8f8f8;
+  margin-bottom: 2rem;
+}
+
+.women-button {
+  background-color: #d4af37 !important;
+  color: #000 !important;
+  padding: 12px 30px !important;
+  font-weight: bold !important;
+  border-radius: 40px !important;
+  text-transform: uppercase;
+  transition: all 0.4s ease-in-out;
+}
+
+.women-button:hover {
+  background-color: #fff !important;
+  color: #000 !important;
+  transform: scale(1.05);
+}
+
+/* CATEGORY SECTIONS */
+.category-section {
+  padding: 80px 40px;
+  background-color: #fff;
+  text-align: center;
+  position: relative;
+}
+
+.section-title {
+  font-family: "Playfair Display", serif !important;
+  font-size: 2.5rem !important;
+  margin-bottom: 40px !important;
+  color: #1c1c1c;
+  position: relative;
+}
+
+.section-title::after {
+  content: "";
+  position: absolute;
+  width: 80px;
+  height: 3px;
+  background-color: #d4af37;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* SLIDER ITEMS */
+.collection-card {
+  background-color: #fff;
+  border: none !important;
+  border-radius: 18px !important;
+  overflow: hidden;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.collection-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.15);
+}
+
+.collection-card img {
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.collection-card:hover img {
+  transform: scale(1.05);
+}
+
+.collection-card .MuiCardContent-root {
+  text-align: center;
+  padding: 25px 20px !important;
+}
+
+.collection-card h6 {
+  font-family: "Playfair Display", serif !important;
+  font-size: 1.1rem !important;
+  margin-bottom: 10px !important;
+}
+
+.collection-card .MuiButton-root {
+  background-color: #d4af37 !important;
+  color: #000 !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
+  border-radius: 50px !important;
+  transition: all 0.3s ease-in-out;
+}
+
+.collection-card .MuiButton-root:hover {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+/* ESSENCE SECTION */
+.essence-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 20px;
+  background-color: #f8f8f8; /* optional subtle backdrop */
+}
+
+.essence-text {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.5rem;
+  max-width: 800px;
+  margin: 30px auto;
+  line-height: 1.8;
+  color: #222;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+/* ✨ Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* CALL TO ACTION */
+.cta-section {
+  background: linear-gradient(135deg, #000, #2e2e2e);
+  color: #fff;
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.cta-text {
+  font-size: 1.8rem !important;
+  font-family: "Playfair Display", serif !important;
+  margin-bottom: 30px !important;
+}
+
+.cta-button {
+  background-color: #d4af37 !important;
+  color: #000 !important;
+  padding: 12px 40px !important;
+  font-weight: bold !important;
+  border-radius: 40px !important;
+  text-transform: uppercase;
+  transition: all 0.3s ease-in-out;
+}
+
+.cta-button:hover {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 960px) {
+  .women-title {
+    font-size: 2.8rem !important;
+  }
+
+  .category-section {
+    padding: 60px 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .women-title {
+    font-size: 2.2rem !important;
+  }
+
+  .essence-text {
+    font-size: 1.1rem;
+  }
+}

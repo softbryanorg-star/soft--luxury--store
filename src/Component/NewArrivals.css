@@ -1,0 +1,13 @@
+.new-arrivals{
+    padding:60px 20px;
+    background:#fff;
+    padding-top: 250px;
+}
+.new-arrivals .wrap{max-width:1200px;margin:0 auto}
+.wrap h2{
+    text-align:center;
+    font-size: 30px;
+}
+.arrival-card{border-radius:12px;overflow:hidden}
+.arrival-card img{object-fit:cover}
+@media(max-width:900px){.new-arrivals .wrap{padding:0 12px}}

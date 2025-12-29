@@ -1,0 +1,18 @@
+.featured-collections{
+    padding:60px 20px;
+    background:linear-gradient(180deg,#fff,#f8fafc);
+    padding-top:10px;
+}
+.featured-collections .wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1200px;margin:0 auto;padding-bottom:40px}
+.collection-card{border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(2,6,23,0.06);background:#fff}
+.collection-card .image{
+    height:260px;
+    background-size:cover;
+    background-position:center;
+    padding-bottom:30px;
+}
+.collection-card .info{padding:18px}
+.collection-card h3{margin-bottom:6px
+}
+.collection-card .link{color:#7c3aed;text-decoration:none;font-weight:600}
+@media(max-width:900px){.featured-collections .wrap{grid-template-columns:1fr}}

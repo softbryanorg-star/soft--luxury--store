@@ -1,0 +1,11 @@
+.testimonials{padding:40px 20px;background:#fff}
+.testimonials .wrap{max-width:900px;margin:0 auto;text-align:center}
+.testimonial-slide{display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px}
+.testimonial-slide .avatar{width:96px;height:96px;object-fit:cover;border-radius:50%;box-shadow:0 8px 20px rgba(0,0,0,0.12)}
+.quote p{font-size:20px;margin-bottom:8px;max-width:680px;margin-left:auto;margin-right:auto}
+.quote span{opacity:.7;font-size:14px}
+
+@media (min-width:900px){
+	.testimonial-slide{flex-direction:row;align-items:center;text-align:left}
+	.testimonial-slide .avatar{margin-right:18px}
+}
