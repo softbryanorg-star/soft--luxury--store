@@ -3,6 +3,8 @@ import { Box, Button, Card, CardMedia, CardContent, Typography, Snackbar } from 
 import { motion } from 'framer-motion'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import { useCart } from '../context/CartContext'
+import { useNavigate } from 'react-router-dom'
+import { isAuthenticated } from '../utils/auth'
 import ProductModal from '../Component/ProductModal'
 import './WomenCategory.css'
 
@@ -39,6 +41,7 @@ import jeans3 from '../assets/Womenjean3.jpeg'
 
 const WomenCategory = () => {
   const { addToCart } = useCart()
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('ankara')
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [currentProduct, setCurrentProduct] = useState(null)
@@ -82,9 +85,15 @@ const WomenCategory = () => {
   ]
 
   const handleAddToCart = (product) => {
+    if (!isAuthenticated()) {
+      try { localStorage.setItem('pendingCartItem', JSON.stringify(product)) } catch (e) {}
+      navigate('/Login', { state: { redirectTo: '/cart' } })
+      return
+    }
     addToCart(product)
     setCurrentProduct(product)
     setOpenSnackbar(true)
+    navigate('/cart')
   }
 
   const openProduct = (product) => {

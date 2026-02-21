@@ -11,6 +11,8 @@ import {
 import { motion } from "framer-motion";
 import Slider from "react-slick";
 import { useCart } from "../context/CartContext";
+import { useNavigate } from 'react-router-dom'
+import { isAuthenticated } from '../utils/auth'
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ProductModal from "../Component/ProductModal";
 import { Link } from "react-router-dom";
@@ -58,15 +60,22 @@ const Men = () => {
   };
 
   const { addToCart } = useCart();
+  const navigate = useNavigate()
   const [modalOpen, setModalOpen] = useState(false);
   const [modalProduct, setModalProduct] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(null);
 
   const handleAddToCart = (product) => {
+    if (!isAuthenticated()) {
+      try { localStorage.setItem('pendingCartItem', JSON.stringify(product)) } catch (e) {}
+      navigate('/Login', { state: { redirectTo: '/cart' } })
+      return
+    }
     addToCart(product);
     setCurrentProduct(product);
     setOpenSnackbar(true);
+    navigate('/cart')
   };
 
   const openProduct = (product) => {

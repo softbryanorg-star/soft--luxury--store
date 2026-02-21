@@ -3,6 +3,8 @@ import { Box, Button, Card, CardMedia, CardContent, Typography, Snackbar } from 
 import { motion } from 'framer-motion'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import { useCart } from '../context/CartContext'
+import { useNavigate } from 'react-router-dom'
+import { isAuthenticated } from '../utils/auth'
 import ProductModal from '../Component/ProductModal'
 import './MenCategory.css'
 
@@ -145,6 +147,7 @@ import wintercoat7 from '../assets/Wintercoat7.jpeg'
 
 const MenCategory = () => {
   const { addToCart } = useCart()
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('suits')
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [currentProduct, setCurrentProduct] = useState(null)
@@ -305,9 +308,15 @@ const MenCategory = () => {
   ]
 
   const handleAddToCart = (product) => {
+    if (!isAuthenticated()) {
+      try { localStorage.setItem('pendingCartItem', JSON.stringify(product)) } catch (e) {}
+      navigate('/Login', { state: { redirectTo: '/cart' } })
+      return
+    }
     addToCart(product)
     setCurrentProduct(product)
     setOpenSnackbar(true)
+    navigate('/cart')
   }
 
   const openProduct = (product) => {
@@ -318,18 +327,18 @@ const MenCategory = () => {
   const tabOptions = [
     { value: 'suits', label: 'LUXURY SUITS' },
     { value: 'tshirt', label: 'T SHIRT' },
-    { value: 'top', label: 'LUXURY TOP' },
+    { value: 'top', label: 'LUXURY TOPS' },
     { value: 'blazerjacket', label: 'LUXURY BLAZER JACKETS' },
-    { value: 'blazershirt', label: 'LUXURY BLAZER T SHIRTS' },
+    { value: 'blazershirt', label: ' BLAZER T SHIRTS' },
     { value: 'gymwear', label: 'LUXURY GYM WEARS' },
     { value: 'sweater', label: 'LUXURY SWEATERS' },
-    { value: 'coat', label: 'LUXURY MEN COATS' },
-    { value: 'jeans', label: 'LUXURY MEN JEANS' },
-    { value: 'pajama', label: 'LUXURY MEN PAJAMAS' },
-    { value: 'short', label: 'LUXURY BLAZER SHORTS' },
-    { value: 'trouser', label: 'LUXURY MEN TROUSERS' },
-    { value: 'turtleneck', label: 'LUXURY TURTLE NECK LONG SLEEVES' },
-    { value: 'wintercoat', label: 'LUXURY MEN WINTERCOAT' },
+    { value: 'coat', label: ' MEN COATS' },
+    { value: 'jeans', label: ' MEN JEANS' },
+    { value: 'pajama', label: ' MEN PAJAMAS' },
+    { value: 'short', label: ' BLAZER SHORTS' },
+    { value: 'trouser', label: ' MEN TROUSERS' },
+    { value: 'turtleneck', label: ' TURTLE NECK LONG SLEEVES' },
+    { value: 'wintercoat', label: ' MEN WINTERCOAT' },
   ]
 
   const renderTabContent = () => {

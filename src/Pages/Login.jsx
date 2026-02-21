@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import {
   Box,
@@ -11,7 +12,9 @@ import {
 import { Visibility, VisibilityOff, LockOutlined } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import axios from "axios";
-import { useNavigate }from 'react-router-dom';
+import { setAuth } from '../utils/auth';
+import { useNavigate, useLocation }from 'react-router-dom';
+import { useCart } from '../context/CartContext'
 
 import { CircularProgress } from "@mui/material";
 
@@ -22,23 +25,47 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] =useState("")
+  const API_BASE = import.meta.env.VITE_BASE_URL || '';
+  const location = useLocation()
+  const { addToCart } = useCart()
 
   const handleLogin = async () => {
     setLoading(true)
     setError("")
     let payload=  {email,password}
     try {
-      const response = await axios.post(
-        "https://fullstack-student-backend.onrender.com/api/auth/login",
-        payload
-      );
-      console.log(response);
-     // Handle successful login
-      navigate("/");
-    } catch (error) {
+      const response = await axios.post(`${API_BASE}/api/auth/login`, payload);
+      const { token, user } = response.data;
+      // persist auth info via helper (also sets axios header)
+      if (token) setAuth(token, user);
+
+      // After login: if there is a pendingCartItem, restore it to the global cart
+      try {
+        const pendingRaw = localStorage.getItem('pendingCartItem')
+        if (pendingRaw) {
+          const pending = JSON.parse(pendingRaw)
+          if (pending) {
+            addToCart(pending) // call existing cart logic
+            localStorage.removeItem('pendingCartItem')
+          }
+        }
+      } catch (e) {
+        // ignore parse errors
+      }
+
+      // Role-based redirect: admins -> /admin
+      if (user?.role === 'admin') {
+        navigate('/admin')
+        return
+      }
+
+      // redirect to the place that initiated login (if provided) or to /cart
+      const redirectTo = location.state?.redirectTo || '/cart'
+      navigate(redirectTo)
+    } catch (err) {
       // Handle login error
-      console.error("Login failed:", error);
-      setError(error?.response?.data?.error || "Login failed")
+      console.error("Login failed:", err);
+      setError(err?.response?.data?.error || "Login failed")
     } finally{
         setLoading(false)
     }
@@ -52,7 +79,7 @@ const Login = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "linear-gradient(135deg, #1565c0, #42a5f5)",
+        background: "linear-gradient(135deg, #000000, #0a0a0a)",
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         backgroundAttachment: "fixed",
@@ -79,9 +106,9 @@ const Login = () => {
             width: { xs: "90%", sm: 400 },
             borderRadius: "20px",
             textAlign: "center",
-            background: "rgba(255, 255, 255, 0.95)",
-            backdropFilter: "blur(10px)",
-            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
+            background: "#ffffff",
+            backdropFilter: "none",
+            boxShadow: "0 8px 30px rgba(2,6,23,0.06)",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
@@ -93,23 +120,23 @@ const Login = () => {
               width: 80,
               height: 80,
               borderRadius: "50%",
-              background: "linear-gradient(135deg, #1976d2, #42a5f5)",
+              background: "linear-gradient(90deg, #d4af37, #b8860b)",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               mx: "auto",
               mb: 2,
-              boxShadow: "0 4px 20px rgba(25, 118, 210, 0.5)",
+              boxShadow: "0 6px 24px rgba(212,175,55,0.18)",
             }}
           >
-            <LockOutlined sx={{ fontSize: 40, color: "#fff" }} />
+            <LockOutlined sx={{ fontSize: 40, color: "#111" }} />
           </Box>
 
           {/* Title */}
           <Typography
             variant="h5"
             fontWeight="bold"
-            sx={{ mb: 3, color: "#0d47a1" }}
+            sx={{ mb: 3, color: "#d4af37" }}
           >
             {!error ? 'Welcome Back': error }
           </Typography>
@@ -124,7 +151,8 @@ const Login = () => {
             onChange={(event) => setEmail(event.target.value)}
             sx={{
               mb: 3,
-              "& .MuiOutlinedInput-root": { borderRadius: "12px" },
+              '& .MuiOutlinedInput-root': { borderRadius: '12px' },
+              '& .MuiInputBase-root': { color: '#111', background: 'rgba(0,0,0,0.03)', borderRadius: '8px' }
             }}
           />
 
@@ -138,7 +166,8 @@ const Login = () => {
             variant="outlined"
             sx={{
               mb: 3,
-              "& .MuiOutlinedInput-root": { borderRadius: "12px" },
+              '& .MuiOutlinedInput-root': { borderRadius: '12px' },
+              '& .MuiInputBase-root': { color: '#111', background: 'rgba(0,0,0,0.03)', borderRadius: '8px' }
             }}
             InputProps={{
               endAdornment: (
@@ -157,18 +186,17 @@ const Login = () => {
             variant="contained"
             size="large"
             onClick={handleLogin}
-            // disable the button while loading
-            // disabled={loading}
             sx={{
               py: 1.4,
               fontWeight: "bold",
               borderRadius: "12px",
               textTransform: "none",
               fontSize: "1rem",
-              background: "linear-gradient(135deg, #1976d2, #0d47a1)",
-              boxShadow: "0 6px 25px rgba(13, 71, 161, 0.4)",
+              background: "linear-gradient(90deg, #d4af37, #b8860b)",
+              color: '#000',
+              boxShadow: "0 8px 30px rgba(212,175,55,0.18)",
               "&:hover": {
-                background: "linear-gradient(135deg, #1565c0, #0d47a1)",
+                background: "linear-gradient(90deg, #b8860b, #d4af37)",
               },
             }}
           >
@@ -178,13 +206,13 @@ const Login = () => {
           {/* Footer Text */}
           <Typography
             variant="body2"
-            sx={{ mt: 3, color: "text.secondary", textAlign: "center" }}
+            sx={{ mt: 3, color: "#ddd", textAlign: "center" }}
           >
             Don’t have an account?{" "}
             <a
               href="/register"
               style={{
-                color: "#1976d2",
+                color: "#d4af37",
                 fontWeight: 600,
                 textDecoration: "none",
               }}

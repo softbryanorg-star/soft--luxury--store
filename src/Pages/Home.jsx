@@ -24,8 +24,8 @@ const Home = () => {
       <FeaturedCollections />
       
       <Spotlight />
-      <AnimatedCTA />
-      <Partners />
+
+
       <Testimonials />
 
       <Newsletter />

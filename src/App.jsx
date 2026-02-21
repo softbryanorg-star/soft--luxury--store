@@ -18,7 +18,14 @@ import WomenCategory from "./Pages/WomenCategory"
 import  Login from  "./Pages/Login"
 import { CartProvider } from "./context/CartContext";
 import Cart from "./Pages/Cart"
+import ProtectedRoute from "./Component/ProtectedRoute"
 import Checkout from "./Pages/Checkout";
+import AdminRoute from "./Component/AdminRoute";
+import AdminLayout from "./Pages/Admin/AdminLayout";
+import Dashboard from "./Pages/Admin/Dashboard";
+import Products from "./Pages/Admin/Products";
+import ProductForm from "./Pages/Admin/ProductForm";
+import Orders from "./Pages/Admin/Orders";
 
 function App() {
 
@@ -36,9 +43,20 @@ function App() {
         <Route path="/Women" element={<Women />} />
         <Route path="/WomenCategory" element={<WomenCategory />} />
         <Route path="/Login" element={<Login />} />
-        <Route path="/Cart" element={<Cart />} />
+        {/* protect lowercase /cart route; Nav links use /cart */}
+        <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+        {/* keep legacy /Cart path for backwards compatibility */}
+        <Route path="/Cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
         <Route path="/Checkout" element={<Checkout />} />
 
+        {/* Admin routes */}
+        <Route path="/admin" element={<AdminRoute><AdminLayout/></AdminRoute>}>
+          <Route index element={<Dashboard/>} />
+          <Route path="products" element={<Products/>} />
+          <Route path="products/:id/edit" element={<ProductForm/>} />
+          <Route path="products/new" element={<ProductForm/>} />
+          <Route path="orders" element={<Orders/>} />
+        </Route>
 
 
       </Routes> 

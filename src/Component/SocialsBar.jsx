@@ -13,16 +13,19 @@ const TikTokIcon = (props)=> (
 
 const SocialsBar = ()=>{
   return (
-    <div className="socials-bar">
-      <a href="https://www.instagram.com/softbryan" target="_blank" rel="noopener noreferrer" className="s" aria-label="Instagram">
-        <InstagramIcon className="mui-icon" />
-        <div className="label">Instagram</div>
-      </a>
+    <div className="socials-wrap">
+      <div className="socials-writeup">or you can follow us on our social media platforms</div>
+      <div className="socials-bar" role="navigation" aria-label="Social links">
+        <a href="https://www.instagram.com/softbryan" target="_blank" rel="noopener noreferrer" className="s" aria-label="Instagram">
+          <InstagramIcon className="mui-icon" />
+          <div className="label">Instagram</div>
+        </a>
 
-      <a href="https://www.tiktok.com/@softbryan" target="_blank" rel="noopener noreferrer" className="s" aria-label="TikTok">
-        <TikTokIcon className="mui-icon" />
-        <div className="label">TikTok</div>
-      </a>
+        <a href="https://www.tiktok.com/@softbryan" target="_blank" rel="noopener noreferrer" className="s" aria-label="TikTok">
+          <TikTokIcon className="mui-icon" />
+          <div className="label">TikTok</div>
+        </a>
+      </div>
     </div>
   )
 }

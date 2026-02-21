@@ -11,3 +11,15 @@
 .arrival-card{border-radius:12px;overflow:hidden}
 .arrival-card img{object-fit:cover}
 @media(max-width:900px){.new-arrivals .wrap{padding:0 12px}}
+
+/* Reduce the large top spacing on small phone screens without affecting desktop */
+@media (max-width: 600px) {
+    .new-arrivals {
+        padding-top: 64px; /* much smaller top gap on phones */
+        padding-bottom: 40px;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    .new-arrivals .wrap{max-width: 100%;}
+    .wrap h2{font-size:22px}
+}

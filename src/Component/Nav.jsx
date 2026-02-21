@@ -17,7 +17,9 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { useCart } from "../context/CartContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from '../utils/api';
+import { isAuthenticated, clearAuth, getUser } from '../utils/auth';
 
 const Nav = () => {
   const { cart } = useCart();
@@ -27,15 +29,21 @@ const Nav = () => {
 
   const toggleDrawer = () => setMobileOpen(!mobileOpen);
 
-  const navLinks = [
+  const navigate = useNavigate();
+
+  const baseLinks = [
     { label: "Home", to: "/" },
     { label: "Women", to: "/Women" },
     { label: "Men", to: "/Men" },
     { label: "About", to: "/About" },
     { label: "Accessories", to: "/Accessories" },
     { label: "Contact", to: "/Contact" },
-    { label: "Login", to: "/Login" },
   ];
+
+  const user = getUser();
+  const navLinks = isAuthenticated()
+    ? [...baseLinks, ...(user && user.role === 'admin' ? [{ label: 'Admin', to: '/admin' }] : []), { label: 'Cart', to: '/cart' }]
+    : [...baseLinks, { label: 'Login', to: '/Login' }];
 
   return (
     <>
@@ -123,6 +131,19 @@ const Nav = () => {
                 <ShoppingCartIcon sx={{ fontSize: 30 }} />
               </Badge>
             </IconButton>
+
+            {/* LOGOUT / LOGIN */}
+            {isAuthenticated() ? (
+              <Button onClick={async () => {
+                try {
+                  await axios.post('/api/auth/logout');
+                } catch (e) {
+                  // ignore
+                }
+                clearAuth();
+                navigate('/');
+              }} sx={{ color: 'gold', textTransform: 'none' }}>Logout</Button>
+            ) : null}
 
             {/* MOBILE MENU ICON */}
             <IconButton

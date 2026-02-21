@@ -33,6 +33,8 @@ import J from '../assets/acc10.jpeg'
 import './Accessories.css'
 import Slider from 'react-slick'
 import { useCart } from '../context/CartContext'
+import { useNavigate } from 'react-router-dom'
+import { isAuthenticated } from '../utils/auth'
 import ProductModal from '../Component/ProductModal'
 import { Card, CardMedia, CardContent, Button, Snackbar } from '@mui/material'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
@@ -41,7 +43,8 @@ import { motion } from 'framer-motion'
 const Accessories = () => {
   const slides = [D, g, n, j];
   const [current, setCurrent] = useState(0);
-  const { cart, addToCart, removeFromCart, getCartTotal } = useCart();
+  const { addToCart } = useCart();
+  const navigate = useNavigate()
   const [modalOpen, setModalOpen] = useState(false);
   const [modalProduct, setModalProduct] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -59,13 +62,18 @@ const Accessories = () => {
   const handleAddToCart = (item) => {
     // Normalize accessories product to { name, price, image }
     const prod = { name: item.name, price: item.price, image: item.img || item.image };
+    if (!isAuthenticated()) {
+      try { localStorage.setItem('pendingCartItem', JSON.stringify(prod)) } catch (e) {}
+      navigate('/Login', { state: { redirectTo: '/cart' } })
+      return
+    }
     addToCart(prod);
     setCurrentProduct(prod);
     setOpenSnackbar(true);
+    navigate('/cart')
   };
 
-  // Calculate total price via context
-  const total = getCartTotal();
+  // (Cart UI removed here; global navbar cart handles items)
 
   // Product groups
   const watches = [
@@ -192,20 +200,7 @@ const Accessories = () => {
         </section>
       ))}
 
-      {/* Floating Cart Summary (uses global cart) */}
-      <div className="cart-summary">
-        <h3>Your Cart ({cart.length} items)</h3>
-        {cart.map((item, idx) => (
-          <div key={idx} className="cart-item">
-            <img src={item.image || item.img} alt={item.name} style={{ width: 48, height: 48, objectFit: 'cover', marginRight: 8 }} />
-            <span>{item.name}{item.selectedSize ? ` (Size: ${item.selectedSize})` : ''}</span>
-            <span style={{ marginLeft: 8 }}>x{item.quantity}</span>
-            <span style={{ marginLeft: 8 }}>${(item.price * item.quantity).toFixed(2)}</span>
-            <button onClick={() => removeFromCart(item.id || item._derivedId)}>Remove</button>
-          </div>
-        ))}
-        <h4>Total: ${total.toFixed(2)}</h4>
-      </div>
+      {/* Local cart removed — global navbar cart manages items */}
       <ProductModal open={modalOpen} onClose={() => setModalOpen(false)} product={modalProduct} onAdd={(p) => handleAddToCart({ ...p, image: p.image || p.img })} />
       <Snackbar
         open={openSnackbar}

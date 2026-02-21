@@ -8,10 +8,16 @@ import {
   Grid,
   Paper,
 } from "@mui/material";
+import axios from 'axios';
+import usePaystack from '../hooks/usePaystack';
 import { useCart } from "../context/CartContext";
 
 const Checkout = () => {
   const { cart } = useCart();
+
+  const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const { initiatePayment } = usePaystack();
+  const [payLoading, setPayLoading] = useState(false);
 
   const subtotal = cart.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -259,8 +265,32 @@ const Checkout = () => {
                       background: "#fff",
                     },
                   }}
+                  // THIS IS THE FUNCTION FOR PAYMENT
+                  onClick={async () => {
+                    // proceed to create order and initiate payment
+                    if (cart.length === 0) return;
+                    setPayLoading(true);
+                    try {
+                      const items = cart.map(item => ({ productId: item.id, productSnapshot: { name: item.name, price: item.price, image: item.image }, quantity: item.quantity, unitPrice: item.price }));
+                      const shippingAddress = { ...form };
+                      const create = await axios.post(`${API}/api/orders`, { items, shippingAddress });
+                      const { orderId } = create.data;
+                      const payInit = await initiatePayment(orderId, form.email || 'customer@example.com');
+                      if (payInit?.authorization_url) {
+                        window.location.href = payInit.authorization_url;
+                      } else {
+                        console.error('Payment initiation failed', payInit);
+                        alert('Payment initiation failed');
+                      }
+                    } catch (err) {
+                      console.error(err);
+                      alert('Could not create order or initiate payment');
+                    } finally {
+                      setPayLoading(false);
+                    }
+                  }}
                 >
-                  Proceed to Payment
+                  {payLoading ? 'Processing...' : 'Proceed to Payment'}
                 </Button>
               </>
             )}

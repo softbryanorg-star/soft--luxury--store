@@ -1,24 +1,420 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
+.env
 node_modules
-dist
-dist-ssr
-*.local
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Registration.jsx
+
+
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Paper,
+  CircularProgress,
+} from "@mui/material";
+import axios from "axios";
+import { motion } from "framer-motion";
+import {useState} from "react";
+import { useNavigate,Link } from "react-router-dom";
+
+const RegistrationScreen = () => {
+    const navigate= useNavigate()
+    const [email, setEmail] =useState("");
+    const [password,setPassword]= useState("");
+    const [firstName,setFirstName]= useState("")
+    const [lastName,setLastName]= useState("")
+    const [phoneNumber,setPhoneNumber]= useState("")
+    const [address,setAddress]= useState("")
+    const [loading,setLoading]= useState(false);
+    const [error,setError]= useState(false);
+    const formData={ firstName, lastName,email, phoneNumber,password, address, } 
+    const Register= async (event) => {
+        event.preventDefault()
+        setLoading(true)
+        try{
+            const data =await 
+            axios.post("https://fullstack-student-backend.onrender.com/api/auth", formData)
+               console.log(data)
+               navigate("/")
+        } catch (error){
+            console.error(error)
+            setError(error)
+        } finally {
+            setLoading(false)
+        } 
+    }
+
+  return (
+    <Box
+      sx={{
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background: "linear-gradient(135deg, #000000, #0a0a0a)",
+        p:13,
+      }}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 40 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <Paper
+          elevation={12}
+          sx={{
+            p: 4,
+            width: { xs: "90vw", sm: 420 },
+            borderRadius: "20px",
+            background: "#ffffff",
+            backdropFilter: "none",
+            boxShadow: "0 8px 25px rgba(2,6,23,0.06)",
+          }}
+        >
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            sx={{ mb: 3, color: "#d4af37", textAlign: "center" }}
+          >
+            {error ? error:("Create Account")}
+          </Typography>
+
+          <form onSubmit={Register}>
+            <TextField
+              fullWidth
+              label="First Name"
+              name="firstName"
+              value={firstName}
+              onChange={(event) => setFirstName(event.target.value)}
+              sx={{ mb: 2, '& .MuiInputBase-root': { color: '#111', background: 'rgba(0,0,0,0.03)', borderRadius: '8px' } }}
+              required
+            />
+
+            <TextField
+              fullWidth
+              label="Last Name"
+              name="lastName"
+              value={lastName}
+              onChange={(event) => setLastName(event.target.value)}
+              sx={{ mb: 2 }}
+              required
+            />
+
+            <TextField
+              fullWidth
+              label="Email"
+              name="email"
+              type="email"
+               value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              sx={{ mb: 2 }}
+              required
+            />
+
+            <TextField
+              fullWidth
+              label="Password"
+              name="password"
+              type="password"
+               value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              sx={{ mb: 2, '& .MuiInputBase-root': { color: '#111', background: 'rgba(0,0,0,0.03)', borderRadius: '8px' } }}
+              required
+            />
+
+            <TextField
+              fullWidth
+              label="Phone Number"
+              name="phoneNumber"
+               value={phoneNumber}
+              onChange={(event) => setPhoneNumber(event.target.value)}
+              sx={{ mb: 2 }}
+            />
+
+            <TextField
+              fullWidth
+              label="Address"
+              name="address"
+               value={address}
+              onChange={(event) => setAddress(event.target.value)}
+              sx={{ mb: 3 }}
+            />
+
+            <Button
+              fullWidth
+              type="submit"
+              variant="contained"
+              sx={{
+                py: 1.4,
+                fontWeight: "bold",
+                borderRadius: "12px",
+                textTransform: "none",
+                fontSize: "1rem",
+                background: "linear-gradient(90deg, #d4af37, #b8860b)",
+                color: '#000',
+                boxShadow: "0 8px 30px rgba(212,175,55,0.18)",
+                "&:hover": {
+                  background: "linear-gradient(90deg, #b8860b, #d4af37)",
+                },
+              }}
+            >
+              {loading ? (<CircularProgress size={24} color="inherit" />):("Register")}
+            </Button>
+          </form>
+
+          <Typography variant="body2" sx={{ mt: 3, textAlign: "center", color: '#ddd' }}>
+            Already have an account? {" "}
+            <Link to ="/Login"
+              style={{
+                color: "#d4af37",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
+             Login
+            </Link>
+          </Typography>
+        </Paper>
+      </motion.div>
+    </Box>
+  );
+};
+
+export default RegistrationScreen;
+
+
+
+
+
+
+
+
+
+login.jsx
+
+
+
+import React, { useState } from "react";
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Paper,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
+import { Visibility, VisibilityOff, LockOutlined } from "@mui/icons-material";
+import { motion } from "framer-motion";
+import axios from "axios";
+import { useNavigate }from 'react-router-dom';
+
+import { CircularProgress } from "@mui/material";
+
+const Login = () => {
+    const navigate =useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] =useState("")
+
+  const handleLogin = async () => {
+    setLoading(true)
+    setError("")
+    let payload=  {email,password}
+    try {
+      const response = await axios.post(
+        "https://fullstack-student-backend.onrender.com/api/auth/login",
+        payload
+      );
+      console.log(response);
+     // Handle successful login
+      navigate("/");
+    } catch (error) {
+      // Handle login error
+      console.error("Login failed:", error);
+      setError(error?.response?.data?.error || "Login failed")
+    } finally{
+        setLoading(false)
+    }
+  };
+
+  return (
+    <Box
+      sx={{
+        minHeight: "100vh",
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background: "linear-gradient(135deg, #000000, #0a0a0a)",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundAttachment: "fixed",
+        marginLeft: "auto",
+        marginRight: "auto",
+        p: 2,
+      }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
+        <Paper
+          elevation={10}
+          sx={{
+            p: { xs: 4, sm: 5 },
+            width: { xs: "90%", sm: 400 },
+            borderRadius: "20px",
+            textAlign: "center",
+            background: "#ffffff",
+            backdropFilter: "none",
+            boxShadow: "0 8px 30px rgba(2,6,23,0.06)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
+          {/* Lock Icon */}
+          <Box
+            sx={{
+              width: 80,
+              height: 80,
+              borderRadius: "50%",
+              background: "linear-gradient(90deg, #d4af37, #b8860b)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              mx: "auto",
+              mb: 2,
+              boxShadow: "0 6px 24px rgba(212,175,55,0.18)",
+            }}
+          >
+            <LockOutlined sx={{ fontSize: 40, color: "#111" }} />
+          </Box>
+
+          {/* Title */}
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            sx={{ mb: 3, color: "#d4af37" }}
+          >
+            {!error ? 'Welcome Back': error }
+          </Typography>
+
+          {/* Email Input */}
+          <TextField
+            fullWidth
+            label="Email"
+            type="email"
+            variant="outlined"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            sx={{
+              mb: 3,
+              '& .MuiOutlinedInput-root': { borderRadius: '12px' },
+              '& .MuiInputBase-root': { color: '#111', background: 'rgba(0,0,0,0.03)', borderRadius: '8px' }
+            }}
+          />
+
+          {/* Password Input */}
+          <TextField
+            fullWidth
+            label="Password"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            variant="outlined"
+            sx={{
+              mb: 3,
+              '& .MuiOutlinedInput-root': { borderRadius: '12px' },
+              '& .MuiInputBase-root': { color: '#111', background: 'rgba(0,0,0,0.03)', borderRadius: '8px' }
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          {/* Login Button */}
+          <Button
+            fullWidth
+            variant="contained"
+            size="large"
+            onClick={handleLogin}
+            // disable the button while loading
+            // disabled={loading}
+            sx={{
+              py: 1.4,
+              fontWeight: "bold",
+              borderRadius: "12px",
+              textTransform: "none",
+              fontSize: "1rem",
+              background: "linear-gradient(90deg, #d4af37, #b8860b)",
+              color: '#000',
+              boxShadow: "0 8px 30px rgba(212,175,55,0.18)",
+              "&:hover": {
+                background: "linear-gradient(90deg, #b8860b, #d4af37)",
+              },
+            }}
+          >
+            {loading ? <CircularProgress size={24} color="inherit" /> :"Login"}
+          </Button>
+
+          {/* Footer Text */}
+          <Typography
+            variant="body2"
+            sx={{ mt: 3, color: "#ddd", textAlign: "center" }}
+          >
+            Don’t have an account?{" "}
+            <a
+              href="/register"
+              style={{
+                color: "#d4af37",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
+              Sign up
+            </a>
+          </Typography>
+        </Paper>
+      </motion.div>
+    </Box>
+  );
+};
+
+export default Login;

@@ -7,6 +7,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import axios from "axios";
+import { setAuth } from '../utils/auth';
 import { motion } from "framer-motion";
 import {useState} from "react";
 import { useNavigate,Link } from "react-router-dom";
@@ -22,17 +23,21 @@ const RegistrationScreen = () => {
     const [loading,setLoading]= useState(false);
     const [error,setError]= useState(false);
     const formData={ firstName, lastName,email, phoneNumber,password, address, } 
+    const API_BASE =  import.meta.env.VITE_BASE_URL || '';
     const Register= async (event) => {
         event.preventDefault()
         setLoading(true)
         try{
-            const data =await 
-            axios.post("https://fullstack-student-backend.onrender.com/api/auth", formData)
-               console.log(data)
-               navigate("/")
-        } catch (error){
-            console.error(error)
-            setError(error)
+          const response = await axios.post(`${API_BASE}/api/auth/register`, formData)
+             const { token, user } = response.data;
+             // persist auth info via helper
+             if (token) setAuth(token, user);
+             // role-based redirect
+             if (user?.role === 'admin') navigate('/admin');
+             else navigate('/');
+        } catch (err){
+            console.error(err)
+            setError(err?.response?.data?.error || 'Registration failed')
         } finally {
             setLoading(false)
         } 
@@ -45,7 +50,7 @@ const RegistrationScreen = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "linear-gradient(135deg, #1565c0, #42a5f5)",
+        background: "linear-gradient(135deg, #000000, #0a0a0a)",
         p:13,
       }}
     >
@@ -60,15 +65,15 @@ const RegistrationScreen = () => {
             p: 4,
             width: { xs: "90vw", sm: 420 },
             borderRadius: "20px",
-            background: "rgba(255, 255, 255, 0.95)",
-            backdropFilter: "blur(10px)",
-            boxShadow: "0 8px 25px rgba(0, 0, 0, 0.2)",
+            background: "#ffffff",
+            backdropFilter: "none",
+            boxShadow: "0 8px 25px rgba(2,6,23,0.06)",
           }}
         >
           <Typography
             variant="h5"
             fontWeight="bold"
-            sx={{ mb: 3, color: "#0d47a1", textAlign: "center" }}
+            sx={{ mb: 3, color: "#d4af37", textAlign: "center" }}
           >
             {error ? error:("Create Account")}
           </Typography>
@@ -80,7 +85,7 @@ const RegistrationScreen = () => {
               name="firstName"
               value={firstName}
               onChange={(event) => setFirstName(event.target.value)}
-              sx={{ mb: 2 }}
+              sx={{ mb: 2, '& .MuiInputBase-root': { color: '#111', background: 'rgba(0,0,0,0.03)', borderRadius: '8px' } }}
               required
             />
 
@@ -112,7 +117,7 @@ const RegistrationScreen = () => {
               type="password"
                value={password}
               onChange={(event) => setPassword(event.target.value)}
-              sx={{ mb: 2 }}
+              sx={{ mb: 2, '& .MuiInputBase-root': { color: '#111', background: 'rgba(0,0,0,0.03)', borderRadius: '8px' } }}
               required
             />
 
@@ -144,10 +149,11 @@ const RegistrationScreen = () => {
                 borderRadius: "12px",
                 textTransform: "none",
                 fontSize: "1rem",
-                background: "linear-gradient(135deg, #1976d2, #0d47a1)",
-                boxShadow: "0 6px 25px rgba(13, 71, 161, 0.4)",
+                background: "linear-gradient(90deg, #d4af37, #b8860b)",
+                color: '#000',
+                boxShadow: "0 8px 30px rgba(212,175,55,0.18)",
                 "&:hover": {
-                  background: "linear-gradient(135deg, #1565c0, #0d47a1)",
+                  background: "linear-gradient(90deg, #b8860b, #d4af37)",
                 },
               }}
             >
@@ -155,11 +161,11 @@ const RegistrationScreen = () => {
             </Button>
           </form>
 
-          <Typography variant="body2" sx={{ mt: 3, textAlign: "center" }}>
-            Already have an account?{" "}
-            <Link to ="/LoginPage"
+          <Typography variant="body2" sx={{ mt: 3, textAlign: "center", color: '#ddd' }}>
+            Already have an account? {" "}
+            <Link to ="/Login"
               style={{
-                color: "#1976d2",
+                color: "#d4af37",
                 fontWeight: 600,
                 textDecoration: "none",
               }}

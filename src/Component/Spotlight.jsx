@@ -1,5 +1,6 @@
 import React from 'react'
 import './Spotlight.css'
+import gown3 from '../assets/Gown3.jpeg'
 import { motion } from 'framer-motion'
 
 const Spotlight = () => {
@@ -12,7 +13,7 @@ const Spotlight = () => {
           <a className="shop-btn" href="/Women">Explore the Masterpiece women collection</a>
         </div>
         <div className="right">
-          <div className="image" style={{ backgroundImage: 'url(/src/assets/Gown3.jpeg)' }} />
+          <div className="image" style={{ backgroundImage: `url(${gown3})` }} aria-hidden="true" />
         </div>
       </motion.div>                     
     </section>
