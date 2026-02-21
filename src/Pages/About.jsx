@@ -32,7 +32,7 @@ Soft Luxury is the art of being noticed without needing to be seen.
 </div>
           <div className="philosophy">
             <h1> Luxury, Redefined</h1>
-            <p> To us, luxury is not a label. It's a feeling  one that lingers softly,
+            <p> To us, luxury is not just a label. It's a feeling  one that lingers softly,
                 long after the moment fades. 
            <br />     It's the way fabric drapes effortlessly across the body,
               <br />    the confidence in a perfect fit,
