@@ -14,7 +14,7 @@ import { useCart } from "../context/CartContext";
 
 const Checkout = () => {
   const { cart } = useCart();
-  const API = import.meta.env.VITE_BASE_URL || "http://localhost:5000";
+  const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const { initiatePayment } = usePaystack();
 
   const [payLoading, setPayLoading] = useState(false);

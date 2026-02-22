@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   Box,
@@ -8,45 +7,47 @@ import {
   Paper,
   InputAdornment,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import { Visibility, VisibilityOff, LockOutlined } from "@mui/icons-material";
 import { motion } from "framer-motion";
-import axios from "axios";
-import { setAuth } from '../utils/auth';
-import { useNavigate, useLocation }from 'react-router-dom';
-import { useCart } from '../context/CartContext'
-
-import { CircularProgress } from "@mui/material";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import API from "../utils/api"; // production-ready axios instance
+import { setAuth } from "../utils/auth";
 
 const Login = () => {
-    const navigate =useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { addToCart } = useCart();
+
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] =useState("")
-  const API_BASE = import.meta.env.VITE_BASE_URL || '';
-  const location = useLocation()
-  const { addToCart } = useCart()
+  const [error, setError] = useState("");
 
   const handleLogin = async () => {
-    setLoading(true)
-    setError("")
-    let payload=  {email,password}
+    setLoading(true);
+    setError("");
+    const payload = { email, password };
+
     try {
-      const response = await axios.post(`${API_BASE}/api/auth/login`, payload);
+      // Use production-ready API instance
+      const response = await API.post("/api/auth/login", payload);
       const { token, user } = response.data;
-      // persist auth info via helper (also sets axios header)
+
+      // persist auth info via helper (sets axios header automatically)
       if (token) setAuth(token, user);
 
-      // After login: if there is a pendingCartItem, restore it to the global cart
+      // Restore pending cart items from localStorage
       try {
-        const pendingRaw = localStorage.getItem('pendingCartItem')
+        const pendingRaw = localStorage.getItem("pendingCartItem");
         if (pendingRaw) {
-          const pending = JSON.parse(pendingRaw)
+          const pending = JSON.parse(pendingRaw);
           if (pending) {
-            addToCart(pending) // call existing cart logic
-            localStorage.removeItem('pendingCartItem')
+            addToCart(pending); // call existing cart logic
+            localStorage.removeItem("pendingCartItem");
           }
         }
       } catch (e) {
@@ -54,20 +55,19 @@ const Login = () => {
       }
 
       // Role-based redirect: admins -> /admin
-      if (user?.role === 'admin') {
-        navigate('/admin')
-        return
+      if (user?.role === "admin") {
+        navigate("/admin");
+        return;
       }
 
       // redirect to the place that initiated login (if provided) or to /cart
-      const redirectTo = location.state?.redirectTo || '/cart'
-      navigate(redirectTo)
+      const redirectTo = location.state?.redirectTo || "/cart";
+      navigate(redirectTo);
     } catch (err) {
-      // Handle login error
       console.error("Login failed:", err);
-      setError(err?.response?.data?.error || "Login failed")
-    } finally{
-        setLoading(false)
+      setError(err?.response?.data?.error || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -138,7 +138,7 @@ const Login = () => {
             fontWeight="bold"
             sx={{ mb: 3, color: "#d4af37" }}
           >
-            {!error ? 'Welcome Back': error }
+            {!error ? "Welcome Back" : error}
           </Typography>
 
           {/* Email Input */}
@@ -148,11 +148,15 @@ const Login = () => {
             type="email"
             variant="outlined"
             value={email}
-            onChange={(event) => setEmail(event.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             sx={{
               mb: 3,
-              '& .MuiOutlinedInput-root': { borderRadius: '12px' },
-              '& .MuiInputBase-root': { color: '#111', background: 'rgba(0,0,0,0.03)', borderRadius: '8px' }
+              "& .MuiOutlinedInput-root": { borderRadius: "12px" },
+              "& .MuiInputBase-root": {
+                color: "#111",
+                background: "rgba(0,0,0,0.03)",
+                borderRadius: "8px",
+              },
             }}
           />
 
@@ -162,12 +166,16 @@ const Login = () => {
             label="Password"
             type={showPassword ? "text" : "password"}
             value={password}
-            onChange={(event) => setPassword(event.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             variant="outlined"
             sx={{
               mb: 3,
-              '& .MuiOutlinedInput-root': { borderRadius: '12px' },
-              '& .MuiInputBase-root': { color: '#111', background: 'rgba(0,0,0,0.03)', borderRadius: '8px' }
+              "& .MuiOutlinedInput-root": { borderRadius: "12px" },
+              "& .MuiInputBase-root": {
+                color: "#111",
+                background: "rgba(0,0,0,0.03)",
+                borderRadius: "8px",
+              },
             }}
             InputProps={{
               endAdornment: (
@@ -193,14 +201,14 @@ const Login = () => {
               textTransform: "none",
               fontSize: "1rem",
               background: "linear-gradient(90deg, #d4af37, #b8860b)",
-              color: '#000',
+              color: "#000",
               boxShadow: "0 8px 30px rgba(212,175,55,0.18)",
               "&:hover": {
                 background: "linear-gradient(90deg, #b8860b, #d4af37)",
               },
             }}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> :"Login"}
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
           </Button>
 
           {/* Footer Text */}
@@ -227,3 +235,35 @@ const Login = () => {
 };
 
 export default Login;
+
+/* 
+==================== LOGIN SUMMARY FOR DEFENSE ====================
+
+1. Axios API:
+   - Uses the centralized, production-ready API instance (`utils/api.js`) 
+     which automatically handles baseURL (local/production) and token refresh logic.
+
+2. Authentication:
+   - On successful login, persists JWT token and user info via `setAuth`.
+   - This also sets default Authorization headers for subsequent requests.
+
+3. Cart Restoration:
+   - Checks `localStorage` for any `pendingCartItem` saved prior to login.
+   - Restores it to global cart via `addToCart()` and removes it from localStorage.
+
+4. Role-based Redirect:
+   - Admin users are redirected to `/admin`.
+   - Normal users are redirected to the route they tried to access (`location.state.redirectTo`) or `/cart`.
+
+5. UI & UX:
+   - Password visibility toggle implemented via MUI `InputAdornment` and `IconButton`.
+   - Full responsive MUI design preserved with Framer Motion animations.
+   - Loading state handled with `CircularProgress`.
+   - Error messages are displayed dynamically in place of the title.
+
+6. Environment Ready:
+   - Fully compatible with local development (`localhost`) and production deployment (`VITE_API_URL`).
+   - No hardcoded URLs, ready for seamless deployment.
+
+====================================================================
+*/
