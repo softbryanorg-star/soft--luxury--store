@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from '../../utils/api'
-import { Box, Typography, Paper, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material'
+import { Box, Typography, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button } from '@mui/material'
+import { Link } from 'react-router-dom'
 
 export default function Orders() {
   const [orders, setOrders] = useState([])
@@ -17,7 +18,21 @@ export default function Orders() {
 
   return (
     <Box>
-      <Typography variant="h5" gutterBottom>Orders</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h5">Orders</Typography>
+        <Button variant="outlined" onClick={async () => {
+          try {
+            const resp = await axios.get('/api/admin/orders/export', { responseType: 'blob' });
+            const url = window.URL.createObjectURL(new Blob([resp.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'orders.csv');
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+          } catch (e) { console.error(e); alert('Export failed') }
+        }}>Export CSV</Button>
+      </Box>
       <Paper>
         <Table>
           <TableHead>
@@ -26,6 +41,7 @@ export default function Orders() {
               <TableCell>Customer</TableCell>
               <TableCell>Total</TableCell>
               <TableCell>Status</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -33,8 +49,11 @@ export default function Orders() {
               <TableRow key={o._id}>
                 <TableCell>{o._id}</TableCell>
                 <TableCell>{o.user?.email || 'Guest'}</TableCell>
-                <TableCell>{o.total || '-'}</TableCell>
+                <TableCell>{o.totalAmount || '-'}</TableCell>
                 <TableCell>{o.status || 'n/a'}</TableCell>
+                <TableCell>
+                  <Button size="small" component={Link} to={`/admin/orders/${o._id}`}>View</Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
