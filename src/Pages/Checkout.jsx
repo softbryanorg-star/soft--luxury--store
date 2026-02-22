@@ -8,15 +8,15 @@ import {
   Grid,
   Paper,
 } from "@mui/material";
-import axios from 'axios';
-import usePaystack from '../hooks/usePaystack';
+import axios from "axios";
+import usePaystack from "../hooks/usePaystack";
 import { useCart } from "../context/CartContext";
 
 const Checkout = () => {
   const { cart } = useCart();
-
-  const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const API = import.meta.env.VITE_BASE_URL || "http://localhost:5000";
   const { initiatePayment } = usePaystack();
+
   const [payLoading, setPayLoading] = useState(false);
 
   const subtotal = cart.reduce(
@@ -42,6 +42,52 @@ const Checkout = () => {
     });
   };
 
+  const handleCheckout = async () => {
+    if (cart.length === 0) return;
+
+    setPayLoading(true);
+
+    try {
+      const items = cart.map((item) => ({
+        productId: item.id, // frontend string ID
+        productSnapshot: {
+          name: item.name,
+          price: item.price,
+          image: item.image,
+        },
+        quantity: item.quantity,
+        unitPrice: item.price,
+      }));
+
+      const shippingAddress = { ...form };
+
+      const create = await axios.post(`${API}/api/orders`, {
+        items,
+        shippingAddress,
+        totalAmount: total,
+      });
+
+      const { orderId } = create.data;
+
+      const payInit = await initiatePayment(
+        orderId,
+        form.email || "customer@example.com"
+      );
+
+      if (payInit?.authorization_url) {
+        window.location.href = payInit.authorization_url;
+      } else {
+        alert("Payment initiation failed");
+        console.error(payInit);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Could not create order or initiate payment");
+    } finally {
+      setPayLoading(false);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -57,243 +103,91 @@ const Checkout = () => {
           textAlign: "center",
           fontFamily: "'Cinzel', serif",
           marginBottom: "40px",
-          fontWeight: "700",
-          letterSpacing: "2px",
+          fontWeight: 700,
         }}
       >
         Checkout
       </Typography>
 
       <Grid container spacing={4} justifyContent="center">
-        {/* LEFT SIDE — BILLING FORM */}
+        {/* BILLING FORM */}
         <Grid item xs={12} md={6}>
-          <Paper
-            sx={{
-              p: 3,
-              background: "#111",
-              border: "1px solid rgba(255,215,0,0.3)",
-              boxShadow: "0 0 20px rgba(255,215,0,0.15)",
-            }}
-          >
-            <Typography
-              variant="h5"
-              sx={{
-                fontFamily: "'Cinzel', serif",
-                marginBottom: "20px",
-                color: "gold",
-              }}
-            >
-              Billing & Shipping Details
+          <Paper sx={{ p: 3, background: "#111" }}>
+            <Typography variant="h5" sx={{ mb: 2 }}>
+              Billing & Shipping
             </Typography>
 
             <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Full Name"
-                  name="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  InputLabelProps={{ style: { color: "gold" } }}
-                  sx={{
-                    "& input": { color: "gold" },
-                    "& fieldset": { borderColor: "gold" },
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Email Address"
-                  name="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  InputLabelProps={{ style: { color: "gold" } }}
-                  sx={{
-                    "& input": { color: "gold" },
-                    "& fieldset": { borderColor: "gold" },
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Street Address"
-                  name="address"
-                  value={form.address}
-                  onChange={handleChange}
-                  InputLabelProps={{ style: { color: "gold" } }}
-                  sx={{
-                    "& input": { color: "gold" },
-                    "& fieldset": { borderColor: "gold" },
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="City"
-                  name="city"
-                  value={form.city}
-                  onChange={handleChange}
-                  InputLabelProps={{ style: { color: "gold" } }}
-                  sx={{
-                    "& input": { color: "gold" },
-                    "& fieldset": { borderColor: "gold" },
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Country"
-                  name="country"
-                  value={form.country}
-                  onChange={handleChange}
-                  InputLabelProps={{ style: { color: "gold" } }}
-                  sx={{
-                    "& input": { color: "gold" },
-                    "& fieldset": { borderColor: "gold" },
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Phone Number"
-                  name="phone"
-                  value={form.phone}
-                  onChange={handleChange}
-                  InputLabelProps={{ style: { color: "gold" } }}
-                  sx={{
-                    "& input": { color: "gold" },
-                    "& fieldset": { borderColor: "gold" },
-                  }}
-                />
-              </Grid>
+              {["name", "email", "address", "city", "country", "phone"].map(
+                (field) => (
+                  <Grid item xs={12} key={field}>
+                    <TextField
+                      fullWidth
+                      label={field.toUpperCase()}
+                      name={field}
+                      value={form[field]}
+                      onChange={handleChange}
+                      InputLabelProps={{ style: { color: "gold" } }}
+                      sx={{
+                        "& input": { color: "gold" },
+                        "& fieldset": { borderColor: "gold" },
+                      }}
+                    />
+                  </Grid>
+                )
+              )}
             </Grid>
           </Paper>
         </Grid>
 
-        {/* RIGHT SIDE — ORDER SUMMARY */}
+        {/* ORDER SUMMARY */}
         <Grid item xs={12} md={4}>
-          <Paper
-            sx={{
-              p: 3,
-              background: "whitesmoke",
-              border: "1px solid rgba(255,215,0,0.3)",
-              boxShadow: "0 0 20px rgba(255,215,0,0.15)",
-            }}
-          >
-            <Typography
-              variant="h5"
-              sx={{
-                fontFamily: "'Cinzel', serif",
-                marginBottom: "20px",
-                color: "gold",
-              }}
-            >
+          <Paper sx={{ p: 3, background: "whitesmoke" }}>
+            <Typography variant="h5" sx={{ mb: 2, color: "gold" }}>
               Order Summary
             </Typography>
 
-            {cart.length === 0 ? (
-              <Typography sx={{ color: "gold", opacity: 0.7 }}>
-                Your cart is empty.
+            {cart.map((item, i) => (
+              <Box
+                key={i}
+                sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}
+              >
+                <Typography>
+                  {item.name} x {item.quantity}
+                </Typography>
+                <Typography>${item.price * item.quantity}</Typography>
+              </Box>
+            ))}
+
+            <Divider sx={{ my: 2 }} />
+
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography>Subtotal</Typography>
+              <Typography>${subtotal.toFixed(2)}</Typography>
+            </Box>
+
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography>Shipping</Typography>
+              <Typography>${shipping}</Typography>
+            </Box>
+
+            <Divider sx={{ my: 2 }} />
+
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography fontWeight="bold">Total</Typography>
+              <Typography fontWeight="bold">
+                ${total.toFixed(2)}
               </Typography>
-            ) : (
-              <>
-                {cart.map((item, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      marginBottom: "12px",
-                    }}
-                  >
-                    <Typography>{item.name} x {item.quantity}</Typography>
-                    <Typography>${item.price * item.quantity}</Typography>
-                  </Box>
-                ))}
+            </Box>
 
-                <Divider sx={{ my: 2, borderColor: "rgba(255,215,0,0.3)" }} />
-
-                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Typography>Subtotal:</Typography>
-                  <Typography>${subtotal.toFixed(2)}</Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    mt: 1,
-                    mb: 2,
-                  }}
-                >
-                  <Typography>Shipping:</Typography>
-                  <Typography>${shipping}</Typography>
-                </Box>
-
-                <Divider sx={{ my: 2, borderColor: "rgba(255,215,0,0.3)" }} />
-
-                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Typography sx={{ fontSize: "1.2rem", fontWeight: "bold" }}>
-                    Total:
-                  </Typography>
-                  <Typography sx={{ fontSize: "1.2rem", fontWeight: "bold" }}>
-                    ${total.toFixed(2)}
-                  </Typography>
-                </Box>
-
-                <Button
-                  fullWidth
-                  sx={{
-                    background: "gold",
-                    color: "#000",
-                    mt: 3,
-                    fontWeight: "bold",
-                    px: 3,
-                    py: 1.5,
-                    borderRadius: "8px",
-                    "&:hover": {
-                      background: "#fff",
-                    },
-                  }}
-                  // THIS IS THE FUNCTION FOR PAYMENT
-                  onClick={async () => {
-                    // proceed to create order and initiate payment
-                    if (cart.length === 0) return;
-                    setPayLoading(true);
-                    try {
-                      const items = cart.map(item => ({ productId: item.id, productSnapshot: { name: item.name, price: item.price, image: item.image }, quantity: item.quantity, unitPrice: item.price }));
-                      const shippingAddress = { ...form };
-                      const create = await axios.post(`${API}/api/orders`, { items, shippingAddress });
-                      const { orderId } = create.data;
-                      const payInit = await initiatePayment(orderId, form.email || 'customer@example.com');
-                      if (payInit?.authorization_url) {
-                        window.location.href = payInit.authorization_url;
-                      } else {
-                        console.error('Payment initiation failed', payInit);
-                        alert('Payment initiation failed');
-                      }
-                    } catch (err) {
-                      console.error(err);
-                      alert('Could not create order or initiate payment');
-                    } finally {
-                      setPayLoading(false);
-                    }
-                  }}
-                >
-                  {payLoading ? 'Processing...' : 'Proceed to Payment'}
-                </Button>
-              </>
-            )}
+            <Button
+              fullWidth
+              sx={{ mt: 3, background: "gold", color: "#000" }}
+              onClick={handleCheckout}
+              disabled={payLoading}
+            >
+              {payLoading ? "Processing..." : "Proceed to Payment"}
+            </Button>
           </Paper>
         </Grid>
       </Grid>
