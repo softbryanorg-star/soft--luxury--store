@@ -32,7 +32,7 @@ const Checkout = () => {
     address: "",
     city: "",
     country: "",
-    phone: "",
+    phoneNumber: "",
   });
 
   const handleChange = (e) => {
@@ -118,7 +118,7 @@ const Checkout = () => {
             </Typography>
 
             <Grid container spacing={2}>
-              {["name", "email", "address", "city", "country", "phone"].map(
+              {["name", "email", "address", "city", "country", "phoneNumber"].map(
                 (field) => (
                   <Grid item xs={12} key={field}>
                     <TextField
