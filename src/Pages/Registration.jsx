@@ -9,7 +9,7 @@ import {
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import API from "../utils/api"; // production-ready axios instance
+import API, { API_BASE } from "../utils/api"; // production-ready axios instance
 import { setAuth } from "../utils/auth";
 
 const RegistrationScreen = () => {
@@ -44,7 +44,10 @@ const RegistrationScreen = () => {
       else navigate("/");
     } catch (err) {
       console.error(err);
-      setError(err?.response?.data?.error || "Registration failed");
+      if (err?.response) {
+        const val = err.response.data?.error || `Request failed (${err.response.status})`;
+        setError(typeof val === 'string' ? val : JSON.stringify(val));
+      } else setError(`Network error: could not reach backend (${API_BASE || 'no backend configured'})`);
     } finally {
       setLoading(false);
     }

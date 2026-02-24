@@ -1,12 +1,21 @@
 import axios from 'axios';
 import { setAuth, clearAuth } from './auth';
 
-const DEFAULT_BACKEND = import.meta.env.VITE_API_URL || '';
-// Determine base: prefer explicit VITE_API_URL; if running locally use localhost; otherwise use relative origin.
+// Fallback to your deployed backend if VITE_API_URL is not set in the environment.
+// IMPORTANT: For production you should set `VITE_API_URL` to your backend URL in your hosting provider.
+const DEFAULT_BACKEND = import.meta.env.VITE_API_URL || 'https://soft-luxury-store-backend.onrender.com';
+
+// Determine base: prefer explicit VITE_API_URL; if running locally use localhost; otherwise use DEFAULT_BACKEND.
 let API_BASE = '';
 if (import.meta.env.VITE_API_URL) API_BASE = import.meta.env.VITE_API_URL;
 else if (typeof window !== 'undefined' && window.location.hostname === 'localhost') API_BASE = 'http://localhost:5000';
-else API_BASE = DEFAULT_BACKEND || '';
+else API_BASE = DEFAULT_BACKEND;
+
+if (!import.meta.env.VITE_API_URL && typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+  // warn in console for production builds missing explicit backend URL
+  // eslint-disable-next-line no-console
+  console.warn('VITE_API_URL is not set — falling back to DEFAULT_BACKEND:', API_BASE);
+}
 
 const API = axios.create({
   baseURL: API_BASE,
@@ -50,3 +59,4 @@ API.interceptors.response.use(
 );
 
 export default API;
+export { API_BASE };

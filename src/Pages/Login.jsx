@@ -13,7 +13,7 @@ import { Visibility, VisibilityOff, LockOutlined } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import API from "../utils/api"; // production-ready axios instance
+import API, { API_BASE } from "../utils/api"; // production-ready axios instance
 import { setAuth } from "../utils/auth";
 
 const Login = () => {
@@ -64,8 +64,13 @@ const Login = () => {
       const redirectTo = location.state?.redirectTo || "/cart";
       navigate(redirectTo);
     } catch (err) {
-      console.error("Login failed:", err);
-      setError(err?.response?.data?.error || "Login failed");
+        console.error("Login failed:", err);
+        if (err?.response) {
+          const val = err.response.data?.error || `Request failed (${err.response.status})`;
+          setError(typeof val === 'string' ? val : JSON.stringify(val));
+        } else {
+          setError(`Network error: could not reach backend (${API_BASE || 'no backend configured'})`);
+        }
     } finally {
       setLoading(false);
     }
