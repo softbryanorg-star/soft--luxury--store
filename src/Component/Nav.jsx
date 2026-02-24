@@ -36,6 +36,7 @@ const Nav = () => {
     { label: "Home", to: "/" },
     { label: "Women", to: "/women" },
     { label: "Men", to: "/men" },
+    { label: "Track Order", to: "/track-order" },
     { label: "Accessories", to: "/accessories" },
     { label: "About", to: "/about" },
     { label: "Contact", to: "/contact" },
