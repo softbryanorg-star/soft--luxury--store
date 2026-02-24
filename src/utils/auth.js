@@ -83,3 +83,33 @@ export function isAuthenticated() {
     return false
   }
 }
+
+
+/*“HTTP is stateless, so the server does not remember users between requests by default.
+To solve this, I separated authentication into two layers: access tokens and refresh tokens.
+
+The access token is stored in localStorage and is short-lived. Its only purpose is to authenticate API requests. Even if it is exposed, it expires quickly and cannot renew itself.
+
+The refresh token is stored in an HTTP-only cookie, which JavaScript cannot access. This protects it from XSS attacks. When the access token expires, the refresh token is automatically sent by the browser to request a new one.
+
+This design balances security risks: localStorage avoids CSRF issues for access tokens, while HTTP-only cookies protect refresh tokens from JavaScript attacks. All real authorization is still enforced on the backend.
+
+So instead of relying on one token, I used a layered approach that reduces attack surface and follows modern security best practices.”
+
+
+
+
+
+
+
+
+
+
+
+“I used localStorage for short-lived access tokens and 
+HTTP-only cookies for refresh tokens to balance XSS and CSRF risks. 
+Even if an access token leaks, it expires quickly and cannot refresh itself without the HTTP-only cookie. 
+Real security is enforced on the backend.”
+
+
+*/

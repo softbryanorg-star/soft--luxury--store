@@ -215,6 +215,7 @@ const Nav = () => {
                   primaryTypographyProps={{
                     fontFamily: "'Poppins', sans-serif",
                     fontSize: "1.1rem",
+                    style: { color: link.label === "Track Order" ? 'gold' : undefined },
                   }}
                 />
               </ListItemButton>

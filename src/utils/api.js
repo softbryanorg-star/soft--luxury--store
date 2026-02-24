@@ -6,13 +6,9 @@ import { setAuth, clearAuth } from './auth';
 const DEFAULT_BACKEND = import.meta.env.VITE_API_URL || 'https://soft-luxury-store-backend.onrender.com';
 
 // Determine base: prefer explicit VITE_API_URL; if running locally use localhost; otherwise use DEFAULT_BACKEND.
-let API_BASE = '';
-if (import.meta.env.VITE_API_URL) API_BASE = import.meta.env.VITE_API_URL;
-else if (typeof window !== 'undefined' && window.location.hostname === 'localhost') API_BASE = 'http://localhost:5000';
-else API_BASE = DEFAULT_BACKEND;
+const API_BASE = import.meta.env.VITE_API_URL || DEFAULT_BACKEND;
 
-if (!import.meta.env.VITE_API_URL && typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
-  // warn in console for production builds missing explicit backend URL
+if (!import.meta.env.VITE_API_URL) {
   // eslint-disable-next-line no-console
   console.warn('VITE_API_URL is not set — falling back to DEFAULT_BACKEND:', API_BASE);
 }
