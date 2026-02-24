@@ -1,6 +1,38 @@
-.newsletter{padding:50px 20px;background:linear-gradient(180deg,#fff,#f6f9fb)}
-.newsletter .wrap{max-width:900px;margin:0 auto;text-align:center}
-.nl-form{display:flex;gap:10px;justify-content:center;margin-top:12px}
-.nl-form input{padding:12px 14px;border-radius:8px;border:1px solid #ddd;width:320px}
-.nl-form button{padding:12px 14px;border-radius:8px;border:none;background:#7c3aed;color:#fff}
-@media(max-width:600px){.nl-form{flex-direction:column}.nl-form input{width:100%}}
+.newsletter{
+    padding:50px 20px;
+    background:linear-gradient(180deg,#fff,#f6f9fb)
+}
+
+.newsletter .wrap{
+    max-width:900px;
+    margin:0 auto;
+    text-align:center
+}
+
+.nl-form{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin-top:12px
+}
+
+.nl-form input{
+    padding:12px 14px;
+    border-radius:8px;
+    border:1px solid #ddd;
+    width:320px
+}
+
+.nl-form button{
+    padding:12px 14px;
+    border-radius:8px;
+    border:none;
+    background:#7c3aed;
+    color:#fff
+}
+
+@media(max-width:600px)
+{
+    .nl-form{flex-direction:column}
+    .nl-form input{width:100%}
+}

@@ -1,1 +1,29 @@
-.site-footer{background:#071028;color:#fff;padding:40px 20px;margin-top:30px}.site-footer .wrap{display:flex;gap:30px;max-width:1100px;margin:0 auto}.site-footer .col{flex:1}.site-footer a{display:block;color:#cbd5e1;text-decoration:none;margin:6px 0}.site-footer .bottom{text-align:center;opacity:.7;margin-top:18px}
+.site-footer{
+    background:#071028;
+    color:#fff;
+    padding:40px 20px;
+    margin-top:30px}
+
+    .site-footer .wrap{
+        display:flex;
+        gap:30px;
+        max-width:1100px;
+        margin:0 auto
+    }
+    
+    .site-footer .col{
+        flex:1
+    }
+    
+    .site-footer a{
+        display:block;
+        color:#cbd5e1;
+        text-decoration:none;
+        margin:6px 0
+    }
+    
+    .site-footer .bottom{
+        text-align:center;
+        opacity:.7;
+        margin-top:18px
+    }

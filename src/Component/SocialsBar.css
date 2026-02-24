@@ -1,23 +1,85 @@
-.socials-bar{display:flex;gap:28px;justify-content:center;align-items:center;padding:14px 0}
-.socials-bar .s{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:inherit;transition:transform .15s ease}
-.socials-bar .s .mui-icon{font-size:28px!important}
-.socials-bar .s .label{margin-top:8px;font-size:13px;color:rgba(0,0,0,0.75);text-align:center}
-.socials-bar .s:hover{transform:translateY(-6px)}
+.socials-bar{
+	display:flex;
+	gap:28px;
+	justify-content:center;
+	align-items:center;
+	padding:14px 0
+}
+
+.socials-bar .s{
+	display:flex;
+	flex-direction:column;
+	align-items:center;
+	text-decoration:none;
+	color:inherit;
+	transition:transform .15s ease
+}
+
+.socials-bar .s .mui-icon{
+	font-size:28px!important
+}
+
+.socials-bar .s .label{
+	margin-top:8px;
+	font-size:13px;
+	color:rgba(0,0,0,0.75);
+	text-align:center
+}
+
+.socials-bar .s:hover{
+	transform:translateY(-6px)
+}
 
 /* fallback for SVG icons inside links */
-.socials-bar svg{width:28px;height:28px}
+.socials-bar svg{
+	width:28px;
+	height:28px
+}
 
 /* accessibility helper: keep text for screen readers */
-.sr-only{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+.sr-only{
+	position:absolute!important;
+	height:1px;
+	width:1px;
+	overflow:hidden;
+	clip:rect(1px,1px,1px,1px);
+	white-space:nowrap
+}
 
 /* wrapper and writeup */
-.socials-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px 12px}
-.socials-writeup{font-size:14px;color:rgba(0,0,0,0.85);text-align:center;max-width:720px}
+.socials-wrap{
+	display:flex;
+	flex-direction:column;
+	align-items:center;
+	gap:8px;
+	padding:8px 12px
+}
+
+.socials-writeup{
+	font-size:14px;
+	color:rgba(0,0,0,0.85);
+	text-align:center;
+	max-width:720px
+}
 
 @media (max-width: 600px){
-	.socials-wrap{padding:6px 10px}
-	.socials-writeup{font-size:13px;max-width:320px}
-	.socials-bar{gap:18px}
-	.socials-bar .s .mui-icon{font-size:24px!important}
-	.socials-bar .s .label{font-size:12px;margin-top:6px}
+	.socials-wrap{
+		padding:6px 10px
+	}
+
+	.socials-writeup{
+		font-size:13px;max-width:320px
+	}
+
+	.socials-bar{
+		gap:18px
+	}
+
+	.socials-bar .s .mui-icon{
+		font-size:24px!important
+	}
+
+	.socials-bar .s .label{
+		font-size:12px;margin-top:6px
+	}
 }

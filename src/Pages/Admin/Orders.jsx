@@ -37,22 +37,22 @@ export default function Orders() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>#</TableCell>
-              <TableCell>Customer</TableCell>
-              <TableCell>Total</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell sx={{ color: 'gold', fontWeight: 700 }}>#</TableCell>
+              <TableCell sx={{ color: 'gold', fontWeight: 700 }}>Customer</TableCell>
+              <TableCell sx={{ color: 'gold', fontWeight: 700 }}>Total</TableCell>
+              <TableCell sx={{ color: 'gold', fontWeight: 700 }}>Status</TableCell>
+              <TableCell sx={{ color: 'gold', fontWeight: 700 }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {orders.map(o => (
-              <TableRow key={o._id}>
-                <TableCell>{o._id}</TableCell>
+              <TableRow key={o._id} hover>
+                <TableCell sx={{ fontFamily: 'monospace', fontSize: 12 }}>{o._id}</TableCell>
                 <TableCell>{o.user?.email || 'Guest'}</TableCell>
                 <TableCell>{o.totalAmount || '-'}</TableCell>
-                <TableCell>{o.status || 'n/a'}</TableCell>
+                <TableCell sx={{ textTransform: 'capitalize' }}>{o.status || 'n/a'}</TableCell>
                 <TableCell>
-                  <Button size="small" component={Link} to={`/admin/orders/${o._id}`}>View</Button>
+                  <Button size="small" component={Link} to={`/admin/orders/${o._id}`} sx={{ color: 'gold', borderColor: 'gold' }} variant="outlined">View</Button>
                 </TableCell>
               </TableRow>
             ))}

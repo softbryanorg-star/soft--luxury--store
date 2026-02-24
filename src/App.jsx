@@ -27,6 +27,7 @@ import Products from "./Pages/Admin/Products";
 import ProductForm from "./Pages/Admin/ProductForm";
 import Orders from "./Pages/Admin/Orders";
 import OrderDetail from "./Pages/Admin/OrderDetail";
+import TrackOrder from "./Pages/TrackOrder";
 
 function App() {
 
@@ -59,6 +60,8 @@ function App() {
           <Route path="orders" element={<Orders/>} />
           <Route path="orders/:id" element={<OrderDetail/>} />
         </Route>
+
+        <Route path="/track-order" element={<TrackOrder/>} />
 
 
       </Routes> 
