@@ -1,13 +1,27 @@
 import axios from 'axios';
 import { setAuth, clearAuth } from './auth';
 
-const DEFAULT_BACKEND = 'https://soft-luxury-store-backend.onrender.com';
-// Prefer explicit VITE_API_URL. Use localhost in dev, otherwise use DEFAULT_BACKEND.
-const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : DEFAULT_BACKEND);
+const DEFAULT_BACKEND = import.meta.env.VITE_API_URL || '';
+// Determine base: prefer explicit VITE_API_URL; if running locally use localhost; otherwise use relative origin.
+let API_BASE = '';
+if (import.meta.env.VITE_API_URL) API_BASE = import.meta.env.VITE_API_URL;
+else if (typeof window !== 'undefined' && window.location.hostname === 'localhost') API_BASE = 'http://localhost:5000';
+else API_BASE = DEFAULT_BACKEND || '';
 
 const API = axios.create({
   baseURL: API_BASE,
   withCredentials: true, // send httpOnly cookies
+});
+
+// Attach token from localStorage on each request to ensure the create() instance uses current token
+API.interceptors.request.use((config) => {
+  try {
+    const t = localStorage.getItem('luxury_store_token');
+    if (t) config.headers = { ...(config.headers || {}), Authorization: `Bearer ${t}` };
+  } catch (e) {
+    // ignore
+  }
+  return config;
 });
 
 API.interceptors.response.use(

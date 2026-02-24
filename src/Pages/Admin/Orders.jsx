@@ -36,7 +36,7 @@ export default function Orders() {
       <Paper>
         <Table>
           <TableHead>
-            <TableRow>
+            <TableRow sx={{ background: '#111' }}>
               <TableCell sx={{ color: 'gold', fontWeight: 700 }}>#</TableCell>
               <TableCell sx={{ color: 'gold', fontWeight: 700 }}>Customer</TableCell>
               <TableCell sx={{ color: 'gold', fontWeight: 700 }}>Total</TableCell>
@@ -45,8 +45,8 @@ export default function Orders() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.map(o => (
-              <TableRow key={o._id} hover>
+            {orders.map((o, idx) => (
+              <TableRow key={o._id} hover sx={{ background: idx % 2 === 0 ? 'rgba(212,175,55,0.03)' : 'transparent', '&:hover': { background: 'rgba(212,175,55,0.08)' } }}>
                 <TableCell sx={{ fontFamily: 'monospace', fontSize: 12 }}>{o._id}</TableCell>
                 <TableCell>{o.user?.email || 'Guest'}</TableCell>
                 <TableCell>{o.totalAmount || '-'}</TableCell>

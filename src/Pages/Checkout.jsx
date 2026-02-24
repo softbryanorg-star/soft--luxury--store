@@ -8,13 +8,12 @@ import {
   Grid,
   Paper,
 } from "@mui/material";
-import axios from "axios";
+import API from '../utils/api';
 import usePaystack from "../hooks/usePaystack";
 import { useCart } from "../context/CartContext";
 
 const Checkout = () => {
   const { cart } = useCart();
-  const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const { initiatePayment } = usePaystack();
 
   const [payLoading, setPayLoading] = useState(false);
@@ -61,7 +60,7 @@ const Checkout = () => {
 
       const shippingAddress = { ...form };
 
-      const create = await axios.post(`${API}/api/orders`, {
+      const create = await API.post('/api/orders', {
         items,
         shippingAddress,
         totalAmount: total,

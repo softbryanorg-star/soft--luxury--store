@@ -45,10 +45,10 @@ export default function Products() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {!loading && items.map(p => (
-              <TableRow key={p._id} hover>
+            {!loading && items.map((p, idx) => (
+              <TableRow key={p._id} hover sx={{ background: idx % 2 === 0 ? 'rgba(212,175,55,0.03)' : 'transparent', '&:hover': { background: 'rgba(212,175,55,0.08)' } }}>
                 <TableCell>{p.name}</TableCell>
-                <TableCell>{p.price}</TableCell>
+                <TableCell>${p.price?.toFixed?.(2) ?? p.price}</TableCell>
                 <TableCell>{p.stock}</TableCell>
                 <TableCell>
                   <Button component={Link} to={`/admin/products/${p._id}/edit`} size="small" variant="outlined" sx={{ color: 'gold', borderColor: 'gold', mr: 1 }}>Edit</Button>
