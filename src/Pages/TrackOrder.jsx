@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import axios from '../utils/api'
 import { Box, TextField, Button, Typography, Paper } from '@mui/material'
 
@@ -6,6 +7,18 @@ export default function TrackOrder(){
   const [orderId, setOrderId] = useState('')
   const [email, setEmail] = useState('')
   const [order, setOrder] = useState(null)
+  const location = useLocation()
+
+  useEffect(() => {
+    // Prefill from navigation state (e.g., from Checkout 'Track Last Order' button)
+    if (location?.state) {
+      const { orderId: sId, email: sEmail } = location.state
+      if (sId) setOrderId(sId)
+      if (sEmail) setEmail(sEmail)
+      // auto-submit when both present
+      if (sId && sEmail) setTimeout(() => submit(), 300)
+    }
+  }, [location])
 
   const submit = async ()=>{
     try{

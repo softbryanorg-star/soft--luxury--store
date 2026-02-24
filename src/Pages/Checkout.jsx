@@ -11,12 +11,14 @@ import {
 import API from '../utils/api';
 import usePaystack from "../hooks/usePaystack";
 import { useCart } from "../context/CartContext";
+import { useNavigate } from 'react-router-dom';
 
 const Checkout = () => {
   const { cart } = useCart();
   const { initiatePayment } = usePaystack();
 
   const [payLoading, setPayLoading] = useState(false);
+  const navigate = useNavigate();
 
   const subtotal = cart.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -67,6 +69,9 @@ const Checkout = () => {
       });
 
       const { orderId } = create.data;
+
+      // Save last order for quick tracking (order confirmation pages can show a "Track Order" button)
+      try { localStorage.setItem('lastOrder', JSON.stringify({ orderId, email: form.email || '' })); } catch (e) {}
 
       const payInit = await initiatePayment(
         orderId,
@@ -186,6 +191,23 @@ const Checkout = () => {
               disabled={payLoading}
             >
               {payLoading ? "Processing..." : "Proceed to Payment"}
+            </Button>
+
+            <Button
+              fullWidth
+              sx={{ mt: 1, background: '#111', color: 'gold' }}
+              onClick={() => {
+                // navigate to tracking page using lastOrder if available
+                const last = localStorage.getItem('lastOrder');
+                if (last) {
+                  const parsed = JSON.parse(last);
+                  navigate('/track-order', { state: { orderId: parsed.orderId, email: parsed.email } });
+                } else {
+                  navigate('/track-order');
+                }
+              }}
+            >
+              Track Last Order
             </Button>
           </Paper>
         </Grid>
