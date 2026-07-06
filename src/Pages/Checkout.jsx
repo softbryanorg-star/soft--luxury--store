@@ -217,3 +217,24 @@ const Checkout = () => {
 };
 
 export default Checkout;
+
+/*
+
+The Checkout page consumes cart state from context, 
+derives totals for display, collects shipping info, 
+and sends a sanitized snapshot to the backend to create an order.
+Payment is initiated only after the order exists,
+ and the actual transaction happens on the gateway to keep sensitive data out of the app.
+The backend remains the source of truth for pricing and verification.
+
+
+
+
+The checkout flow is designed to keep the backend authoritative while maintaining a smooth user experience.
+The frontend consumes cart state, derives totals for display, collects shipping information, and sends a sanitized snapshot to create an order.
+Payments are never trusted from the client — the backend verifies every transaction using server-side verification and webhooks.
+Redirects are used only for UX, while webhooks guarantee reliability and fraud protection.
+This separation ensures security, auditability, and resilience against manipulation or network failure.
+
+*/
+

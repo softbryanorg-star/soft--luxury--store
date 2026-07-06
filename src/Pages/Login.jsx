@@ -266,9 +266,30 @@ export default Login;
    - Loading state handled with `CircularProgress`.
    - Error messages are displayed dynamically in place of the title.
 
-6. Environment Ready:
-   - Fully compatible with local development (`localhost`) and production deployment (`VITE_API_URL`).
-   - No hardcoded URLs, ready for seamless deployment.
+
+
+
+
+
+
+   “This login page securely verifies a user, 
+   remembers what they were doing before logging in, 
+   and safely continues their shopping without losing data. 
+   If the user is an admin, they’re redirected to management tools;
+    if not, they’re returned to checkout seamlessly.”
+
+HIGH-LEVEL TECHNICAL STORY (NO CODE)
+What happens end-to-end in my login page
+
+User enters email and password
+
+Backend verifies credentials
+
+Frontend securely stores a short-lived access token
+
+Any product added before login is restored
+
+User is redirected based on role and intent
 
 ====================================================================
 */

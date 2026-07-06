@@ -56,3 +56,23 @@ API.interceptors.response.use(
 
 export default API;
 export { API_BASE };
+
+/*
+“This file is a centralized API gateway for my frontend.
+It standardizes how every request handles authentication, cookies, token refresh,
+ and backend environment switching.”
+
+
+
+ Non technical explanation
+
+ “This file is like the receptionist of my app.
+Every request passes through it.
+It automatically knows where the backend is, who the user is, whether they’re logged in, 
+and what to do if their session expires — all without the user noticing.”
+
+“My API layer centralizes all network communication.
+It dynamically resolves the backend, securely attaches access tokens,
+ supports httpOnly refresh cookies, silently refreshes expired sessions, 
+and forces logout only when authentication is truly invalid.
+*/

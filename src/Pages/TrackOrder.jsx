@@ -85,13 +85,126 @@ export default function TrackOrder(){
 }
 
 /*
-How to surface the Track Order page in your UI (for demo/defense):
+The Track Order page allows customers to check the status 
+of their order at any time without logging in.
 
-- Add a link/button in the main Nav to `/track-order` so users can access it globally. For example, in `src/Component/Nav.jsx` add: { label: 'Track Order', to: '/track-order' } to `baseLinks`.
-- From the order confirmation page (after a successful checkout), redirect users to `/track-order` and prefill `orderId` and `email` by appending them to the URL or moving them into state.
+They simply enter their order ID and the email they used during checkout.
+The system securely fetches the order from the server 
+and displays its current status and progress.
 
-Example quick button (place where you show order confirmation):
-<Button component={Link} to="/track-order">Track Your Order</Button>
+The Track Order page lets users securely check order progress using their order ID and email.
+The data is always fetched from the backend and rendered conditionally.
+A visual timeline shows the order’s current stage in the delivery process.
 
-This comment is intentionally left here for your defense presentation so you can point to the exact file and explain where to add the entry point for tracking.
+
+
+
+
+
+
+
+
+
+
+optional  iproveemts
+ Add rate limiting
+5 attempts per minute per IP
+ Partial masking
+john****@gmail.com
+ Tracking link emails
+/track?ref=ORDER123
+
+
+
+
+You are a senior backend security engineer working on a MERN e-commerce app.
+
+TASK:
+Harden the "Track Order" feature with industry-standard security while keeping it usable for guest users.
+
+IMPLEMENT THE FOLLOWING CHANGES CAREFULLY:
+
+--------------------------------
+1️⃣ RATE LIMITING (CRITICAL)
+--------------------------------
+- Add rate limiting to the POST /api/orders/track endpoint
+- Limit: 5 attempts per minute per IP address
+- Use express-rate-limit
+- On limit exceeded, return:
+  Status: 429
+  Message: "Too many attempts. Please try again later."
+
+- Apply rate limiting ONLY to the tracking route, not globally.
+
+--------------------------------
+2️⃣ PARTIAL EMAIL MASKING
+--------------------------------
+- When returning order data to the frontend:
+  - Mask the customer's email before sending it
+  - Example:
+    johnsmith@gmail.com → john****@gmail.com
+    ab@yahoo.com → ab****@yahoo.com
+
+- Implement a reusable helper function:
+  maskEmail(email)
+
+- Ensure the full email is NEVER exposed in API responses.
+
+--------------------------------
+3️⃣ SECURE TRACKING LINK (REFERENCE-BASED)
+--------------------------------
+- Add a new field to Order schema:
+  trackingToken (string, unique, random)
+
+- Generate trackingToken when order is created:
+  - crypto.randomBytes(16).toString('hex')
+
+- Support tracking via:
+  GET /api/orders/track?ref=TRACKING_TOKEN
+
+- Validation rules:
+  - If ref exists → track by token
+  - Else → fallback to orderId + email
+  - ref tracking should NOT require email input
+
+--------------------------------
+4️⃣ EMAIL TRACKING LINK
+--------------------------------
+- On successful order creation:
+  - Send an email to the customer
+  - Include a tracking link:
+    https://FRONTEND_URL/track-order?ref=TRACKING_TOKEN
+
+- Stub email logic if email service is unavailable
+- Clearly comment where real email service (SendGrid / Nodemailer) would go
+
+--------------------------------
+5️⃣ FRONTEND INTEGRATION NOTES
+--------------------------------
+- Update TrackOrder.jsx logic:
+  - If ref exists in URL query → auto-fetch order
+  - Hide email + orderId inputs when ref is present
+  - Show masked email returned from backend
+
+--------------------------------
+6️⃣ SECURITY GUARANTEES (DO NOT SKIP)
+--------------------------------
+- Prevent enumeration attacks
+- Prevent brute force guessing
+- Ensure timing-safe comparisons
+- Never leak whether an order exists or not
+- Return generic error messages:
+  "Unable to find order"
+
+--------------------------------
+7️⃣ CODE QUALITY
+--------------------------------
+- Add clear comments explaining security decisions
+- Keep logic readable
+- Do not over-engineer
+- Follow existing project structure
+
+IMPORTANT:
+Do NOT break existing checkout or payment flow.
+All changes must be backward compatible.
 */

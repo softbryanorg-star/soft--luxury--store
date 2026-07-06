@@ -94,8 +94,7 @@ The refresh token is stored in an HTTP-only cookie, which JavaScript cannot acce
 
 This design balances security risks: localStorage avoids CSRF issues for access tokens, while HTTP-only cookies protect refresh tokens from JavaScript attacks. All real authorization is still enforced on the backend.
 
-So instead of relying on one token, I used a layered approach that reduces attack surface and follows modern security best practices.”
-
+So instead of relying on one token, I used a layered approach that reduces attack surface and follows modern security best practices.
 
 
 

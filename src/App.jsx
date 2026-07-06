@@ -28,6 +28,7 @@ import ProductForm from "./Pages/Admin/ProductForm";
 import Orders from "./Pages/Admin/Orders";
 import OrderDetail from "./Pages/Admin/OrderDetail";
 import TrackOrder from "./Pages/TrackOrder";
+import PaymentSuccess from "./Pages/PaymentSuccess";
 
 function App() {
 
@@ -50,6 +51,7 @@ function App() {
         {/* keep legacy /Cart path for backwards compatibility */}
         <Route path="/Cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
         <Route path="/Checkout" element={<Checkout />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
 
         {/* Admin routes */}
         <Route path="/admin" element={<AdminRoute><AdminLayout/></AdminRoute>}>
