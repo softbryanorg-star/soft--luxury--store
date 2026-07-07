@@ -9,13 +9,17 @@ export default function PaymentSuccess() {
   const lastRef = useRef(null)
   const API_BASE = import.meta.env.VITE_BASE_URL || ''
 
+  // ===== DEBUG =====
+  console.log('VITE_BASE_URL =', import.meta.env.VITE_BASE_URL)
+  console.log('API_BASE =', API_BASE)
+  // =================
+
   useEffect(() => {
     if (!reference) {
       setStatus('missing')
       return
     }
 
-    // Prevent duplicate verification for the same reference
     if (lastRef.current === reference) return
     lastRef.current = reference
 
@@ -26,16 +30,18 @@ export default function PaymentSuccess() {
 
     ;(async () => {
       try {
-        const res = await fetch(
-          `${API_BASE}/api/payments/verify/${encodeURIComponent(reference)}`,
-          {
-            signal: controller.signal,
-          }
-        )
+        const verifyUrl = `${API_BASE}/api/payments/verify/${encodeURIComponent(reference)}`
+
+        // ===== DEBUG =====
+        console.log('Verification URL =', verifyUrl)
+        // =================
+
+        const res = await fetch(verifyUrl, {
+          signal: controller.signal,
+        })
 
         if (!mounted) return
 
-        // Handle non-200 responses
         if (!res.ok) {
           const errorData = await res.json().catch(() => ({}))
 
@@ -49,7 +55,6 @@ export default function PaymentSuccess() {
 
         console.log('Verify payment response:', data)
 
-        // Accept all supported success response formats
         const ok =
           data?.ok === true ||
           data?.success === true ||
