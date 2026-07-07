@@ -7,10 +7,12 @@ export default function PaymentSuccess() {
   const reference = searchParams.get('reference')
   const [status, setStatus] = useState('idle') // idle | verifying | success | failed | missing
   const lastRef = useRef(null)
-  const API_BASE = import.meta.env.VITE_BASE_URL || ''
+
+  // Use the same environment variable as the rest of the project
+  const API_BASE = import.meta.env.VITE_API_URL || ''
 
   // ===== DEBUG =====
-  console.log('VITE_BASE_URL =', import.meta.env.VITE_BASE_URL)
+  console.log('VITE_API_URL =', import.meta.env.VITE_API_URL)
   console.log('API_BASE =', API_BASE)
   // =================
 
@@ -20,6 +22,7 @@ export default function PaymentSuccess() {
       return
     }
 
+    // Prevent duplicate verification requests
     if (lastRef.current === reference) return
     lastRef.current = reference
 
@@ -37,6 +40,7 @@ export default function PaymentSuccess() {
         // =================
 
         const res = await fetch(verifyUrl, {
+          method: 'GET',
           signal: controller.signal,
         })
 
