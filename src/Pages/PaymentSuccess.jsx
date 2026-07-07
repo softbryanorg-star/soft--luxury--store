@@ -2,19 +2,19 @@ import React, { useEffect, useState, useRef } from 'react'
 import { Box, Typography, Button } from '@mui/material'
 import { useSearchParams, Link } from 'react-router-dom'
 
+// Use the shared API instance used throughout the application
+import API, { API_BASE } from '../utils/api'
+
 export default function PaymentSuccess() {
   const [searchParams] = useSearchParams()
   const reference = searchParams.get('reference')
-  const [status, setStatus] = useState('idle') // idle | verifying | success | failed | missing
+
+  const [status, setStatus] = useState('idle')
+
   const lastRef = useRef(null)
 
-  // Use the same environment variable as the rest of the project
-  const API_BASE = import.meta.env.VITE_API_URL || ''
-
-  // ===== DEBUG =====
-  console.log('VITE_API_URL =', import.meta.env.VITE_API_URL)
+  // Debug
   console.log('API_BASE =', API_BASE)
-  // =================
 
   useEffect(() => {
     if (!reference) {
@@ -22,40 +22,22 @@ export default function PaymentSuccess() {
       return
     }
 
-    // Prevent duplicate verification requests
     if (lastRef.current === reference) return
     lastRef.current = reference
 
     let mounted = true
-    const controller = new AbortController()
 
     setStatus('verifying')
 
     ;(async () => {
       try {
-        const verifyUrl = `${API_BASE}/api/payments/verify/${encodeURIComponent(reference)}`
+        const endpoint = `/api/payments/verify/${encodeURIComponent(reference)}`
 
-        // ===== DEBUG =====
-        console.log('Verification URL =', verifyUrl)
-        // =================
+        console.log('Verification endpoint =', `${API_BASE}${endpoint}`)
 
-        const res = await fetch(verifyUrl, {
-          method: 'GET',
-          signal: controller.signal,
-        })
+        const { data } = await API.get(endpoint)
 
         if (!mounted) return
-
-        if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}))
-
-          console.error('Payment verification failed:', errorData)
-
-          setStatus('failed')
-          return
-        }
-
-        const data = await res.json()
 
         console.log('Verify payment response:', data)
 
@@ -67,9 +49,10 @@ export default function PaymentSuccess() {
 
         setStatus(ok ? 'success' : 'failed')
       } catch (err) {
-        if (err.name === 'AbortError') return
-
-        console.error('Verification request error:', err)
+        console.error(
+          'Verification request error:',
+          err?.response?.data || err.message || err
+        )
 
         if (mounted) {
           setStatus('failed')
@@ -79,9 +62,8 @@ export default function PaymentSuccess() {
 
     return () => {
       mounted = false
-      controller.abort()
     }
-  }, [reference, API_BASE])
+  }, [reference])
 
   return (
     <Box
@@ -118,7 +100,7 @@ export default function PaymentSuccess() {
             </Typography>
 
             <Typography sx={{ mb: 2 }}>
-              We are verifying your payment with our server. This may take a few
+              We are verifying your payment. This usually takes only a few
               seconds.
             </Typography>
           </>
@@ -128,14 +110,16 @@ export default function PaymentSuccess() {
           <>
             <Typography
               variant="h4"
-              sx={{ mb: 2, color: 'success.main' }}
+              sx={{
+                mb: 2,
+                color: 'success.main',
+              }}
             >
               Payment Successful
             </Typography>
 
             <Typography sx={{ mb: 2 }}>
-              Thank you — your payment has been verified. You can view your orders
-              or continue shopping.
+              Thank you! Your payment has been verified successfully.
             </Typography>
 
             <Box
@@ -161,7 +145,10 @@ export default function PaymentSuccess() {
           <>
             <Typography
               variant="h5"
-              sx={{ mb: 2, color: 'error.main' }}
+              sx={{
+                mb: 2,
+                color: 'error.main',
+              }}
             >
               Payment could not be verified
             </Typography>
